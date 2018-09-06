@@ -9,7 +9,7 @@ func hello() {
 	fmt.Println("hello world!")
 }
 
-func main() {
+func routine() {
 	go hello()
 	time.Sleep(1 * time.Second)
 	fmt.Println("main function")
