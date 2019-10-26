@@ -11,7 +11,7 @@ import (
 
 func Example_one() {
 	//!+main
-	var x, y IntSet
+	var x, y intset.IntSet
 	x.Add(1)
 	x.Add(144)
 	x.Add(9)
@@ -35,7 +35,7 @@ func Example_one() {
 }
 
 func Example_two() {
-	var x IntSet
+	var x intset.IntSet
 	x.Add(1)
 	x.Add(144)
 	x.Add(9)
