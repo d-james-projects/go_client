@@ -1,6 +1,8 @@
 package maps
 
-import "testing"
+import (
+	"testing"
+)
 
 func assertStrings(t *testing.T, got, want string) {
 	t.Helper()
@@ -39,15 +41,71 @@ func TestDictionary(t *testing.T) {
 }
 func TestAdd(t *testing.T) {
 	dictionary := Dict{}
-	dictionary.Add("test", "this is just a test")
+	word := "test"
+	definition := "this is just a test"
+	dictionary.Add(word, definition)
 
-	want := "this is just a test"
-	got, err := dictionary.Definition("test")
+	assertDefinition(t, dictionary, word, definition)
+}
+
+func assertDefinition(t *testing.T, dictionary Dict, word, definition string) {
+	t.Helper()
+
+	want := definition
+	got, err := dictionary.Definition(word)
 	if err != nil {
 		t.Fatal("should find added word:", err)
 	}
 
 	if got != want {
 		t.Errorf("got %q want %q", got, want)
+	}
+}
+
+func TestAddAlreadyExists(t *testing.T) {
+	dictionary := Dict{}
+	word := "test"
+	definition := "this is just a test"
+	err := dictionary.Add(word, definition)
+	if err != nil {
+		t.Fatalf("word %q should be added ok: %q", word, err)
+	}
+
+	assertDefinition(t, dictionary, word, definition)
+
+	err = dictionary.Add(word, definition)
+	if err == nil {
+		t.Fatalf("word %q should not be added a second time: %q", word, err)
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	dictionary := Dict{"test": "starting definition"}
+	word := "test"
+	definition := "this is the updated defintion"
+
+	err := dictionary.Update(word, definition)
+	assertError(t, err, nil)
+	assertDefinition(t, dictionary, word, definition)
+}
+
+func TestUpdateNotExist(t *testing.T) {
+	dictionary := Dict{}
+	word := "test"
+	definition := "this is the updated defintion"
+
+	err := dictionary.Update(word, definition)
+	assertError(t, err, ErrWordDoesNotExist)
+}
+
+func TestDelete(t *testing.T) {
+	word := "test"
+	dictionary := Dict{word: "test definition"}
+
+	dictionary.Delete(word)
+
+	_, err := dictionary.Definition(word)
+	if err != ErrNotFound {
+		t.Errorf("Expected %q to be deleted", word)
 	}
 }
